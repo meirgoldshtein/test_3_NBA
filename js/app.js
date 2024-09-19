@@ -10,13 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const FILTER_END_POINT = 'api/filter';
 const baseURL = 'https://nbaserver-q21u.onrender.com/';
-const playersArr = [];
+let playersArr = [];
 const positionsInput = document.querySelector('#positionSelect');
 const pointsInput = document.querySelector('.points');
 const threeInput = document.querySelector('.threeRange');
 const twoInput = document.querySelector('.twoRange');
 const searchButton = document.querySelector('.searchButton');
 const tableBody = document.querySelector('.tableBody');
+const filterInput = document.querySelector('.filterInput');
+const filterButton = document.querySelector('.filterButton');
+const saveTeamButton = document.querySelector('.saveTeam');
+let teamArr = [];
+let teamsFromDB;
+let index = 0;
 // פונקצייה להצגת מספרים מעל לאינפוט בחירת הנקודות והאחוזים
 const updateLabels = () => {
     const pointsLabel = document.querySelector('.pointsLabel');
@@ -66,6 +72,8 @@ const addPlayerToCard = (target) => {
     card.querySelector('.threePrecents').innerHTML = (_b = parent.querySelector('.THREE_DIV')) === null || _b === void 0 ? void 0 : _b.textContent;
     card.querySelector('.twoPrecents').innerHTML = (_c = parent.querySelector('.FG_DIV')) === null || _c === void 0 ? void 0 : _c.textContent;
     card.querySelector('.playerPoints').innerHTML = (_d = parent.querySelector('.pointsDiv')) === null || _d === void 0 ? void 0 : _d.textContent;
+    const PLAYER = playersArr.filter(player => player._id === target.id)[0];
+    teamArr.push(PLAYER);
     // טיפול בשינוי צבע הכפתורים לאחר הלחיצה
     card.style.backgroundColor = 'pink';
     target.style.backgroundColor = 'red';
@@ -77,6 +85,38 @@ const addPlayerToCard = (target) => {
         }
     });
 };
+// פונקצייה להצגת קבוצות שקיימות בדי בי
+const renderTeams = () => {
+    let players = teamsFromDB[index].players;
+    console.log(players);
+    for (let j = 0; j < players.length; j++) {
+        const card = document.querySelector(`#${players[j].position}`);
+        card.querySelector('.playerName').innerHTML = players[j].playerName;
+        card.querySelector('.threePrecents').innerHTML = players[j].threePercent.toString();
+        card.querySelector('.twoPrecents').innerHTML = players[j].twoPercent.toString();
+        card.querySelector('.playerPoints').innerHTML = players[j].points.toString();
+    }
+};
+// מאזין לכפתור דפדוף ימינה
+document.querySelector('.btnRight').addEventListener('click', () => {
+    if (index >= teamsFromDB.length - 1) {
+        index = 0;
+    }
+    else {
+        index++;
+    }
+    renderTeams();
+});
+// מאזין לכפתור דפדוף שמאלה
+document.querySelector('.btnLeft').addEventListener('click', () => {
+    if (index <= 0) {
+        index = teamsFromDB.length - 1;
+    }
+    else {
+        index--;
+    }
+    renderTeams();
+});
 // יצירת מבנה אובייקט סינון עם פרמטרים שהזין המשתמש שישלחו לשרת
 const createBodyToPost = () => {
     return {
@@ -142,41 +182,63 @@ searchButton.addEventListener('click', (e) => __awaiter(void 0, void 0, void 0, 
             throw data;
         }
         renderTable(data);
+        playersArr = data;
         searchButton.style.backgroundColor = 'red';
     }
     catch (err) {
         console.error(err);
     }
 }));
-// החזרת מערך השחקנים מהלוקל סטורג
-const loadPlayers = () => {
-    const arr = localStorage.getItem('playersArr');
-    return arr ? JSON.parse(arr) : null;
-};
-// הוספת אובייקט  למערך הלוקל סטורג
-const addPlayer = (player) => {
-    const arr = loadPlayers();
-    if (arr) {
-        arr.push(player);
-        localStorage.setItem('playersArr', JSON.stringify(arr));
+const feachTeams = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const Response = yield fetch(`https://nbaserver-q21u.onrender.com/api/GetAllTeams`);
+        const data = yield Response.json();
+        console.log(data);
+        teamsFromDB = data;
     }
-    else {
-        const newArr = [player];
-        localStorage.setItem('playersArr', JSON.stringify(newArr));
+    catch (err) {
+        console.error(err);
     }
-};
-// מחיקת שחקן מהמערך בלוקל סטורג
-const removeTask = (id) => {
-    const arr = loadPlayers();
-    if (!arr)
-        return;
-    const newPlayersArr = arr.filter((player) => player._id !== id);
-    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
-};
-const player1 = {
-    position: 'PG',
-    twoPercent: 0,
-    threePercent: 0,
-    points: 0
-};
+});
+feachTeams();
+// saveTeamButton.addEventListener('click', () => {
+//     if(teamArr.length !== 5)
+//     {
+//         alert('לא נבחרו 5 שחקנים');
+//     }
+//     else
+//     {
+//         postDada(teamArr)
+//     }
+// })
+// // החזרת מערך השחקנים מהלוקל סטורג
+// const loadPlayers = () : displayPlayer[] | null => {
+//     const arr : string | null  = localStorage.getItem('playersArr');
+//     return arr ? JSON.parse(arr) : null;
+// }
+// // הוספת אובייקט  למערך הלוקל סטורג
+// const addPlayer = (player: displayPlayer) :void =>  {
+//     const arr : displayPlayer[]|null = loadPlayers();
+//     if(arr){
+//         arr.push(player);
+//         localStorage.setItem('playersArr', JSON.stringify(arr));
+//     } 
+//     else{
+//         const newArr : displayPlayer[] = [player];
+//         localStorage.setItem('playersArr', JSON.stringify(newArr));
+//     } 
+// }
+// // מחיקת שחקן מהמערך בלוקל סטורג
+// const removeTask = (id: string) => {
+//     const arr : displayPlayer[] | null = loadPlayers()
+//     if(!arr) return;
+//     const newPlayersArr = arr.filter((player) => player._id !== id);
+//     localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
+// }
+// const player1:Filter = {
+//     position: 'PG',
+//     twoPercent: 0,
+//     threePercent: 0,
+//     points: 0
+// }
 // postDada(player1, FILTER_END_POINT);

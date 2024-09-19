@@ -1,13 +1,18 @@
 const FILTER_END_POINT ='api/filter';
 const baseURL = 'https://nbaserver-q21u.onrender.com/';
-const playersArr: displayPlayer[] = [];
+let playersArr: dbPlayer[] = [];
 const positionsInput :HTMLSelectElement = document.querySelector('#positionSelect')!;
 const pointsInput:HTMLInputElement = document.querySelector('.points')!;
 const threeInput:HTMLInputElement = document.querySelector('.threeRange') !;
 const twoInput:HTMLInputElement = document.querySelector('.twoRange')!;
 const searchButton:HTMLButtonElement = document.querySelector('.searchButton')!;
-const tableBody = document.querySelector('.tableBody')!;
-
+const tableBody:HTMLDivElement = document.querySelector('.tableBody')!;
+const filterInput:HTMLInputElement = document.querySelector('.filterInput')!;
+const filterButton:HTMLButtonElement = document.querySelector('.filterButton')!;
+const saveTeamButton:HTMLButtonElement = document.querySelector('.saveTeam')!;
+let teamArr: dbPlayer[] = [];
+let teamsFromDB: team[];
+let index = 0;
 
 // פונקצייה להצגת מספרים מעל לאינפוט בחירת הנקודות והאחוזים
 const updateLabels = () => {
@@ -50,6 +55,11 @@ interface dbPlayer{
     playerName: string;
     __v: number;
     _id: string;
+}
+
+interface team{
+    _id: string;
+    players: dbPlayer[];
 }
 
 // אינטרפייס של גוף בקשת הפוסט לשרת
@@ -102,6 +112,8 @@ const addPlayerToCard = (target : HTMLButtonElement) => {
     card.querySelector('.twoPrecents')!.innerHTML = parent.querySelector('.FG_DIV')?.textContent!;
     card.querySelector('.playerPoints')!.innerHTML = parent.querySelector('.pointsDiv')?.textContent!;
 
+    const PLAYER = playersArr.filter(player => player._id === target.id)[0];
+    teamArr.push(PLAYER);
     // טיפול בשינוי צבע הכפתורים לאחר הלחיצה
     card.style.backgroundColor = 'pink';
     target.style.backgroundColor = 'red';
@@ -116,6 +128,50 @@ const addPlayerToCard = (target : HTMLButtonElement) => {
     });
 
 }
+
+
+
+
+
+// פונקצייה להצגת קבוצות שקיימות בדי בי
+const renderTeams = () => {
+    
+        let players : dbPlayer[] = teamsFromDB[index].players!;
+        console.log(players)
+        for(let j = 0; j < players.length; j++){
+
+            const card : HTMLDivElement = document.querySelector(`#${players[j].position}`)!;
+            card.querySelector('.playerName')!.innerHTML = players[j].playerName;
+            card.querySelector('.threePrecents')!.innerHTML = players[j].threePercent.toString();
+            card.querySelector('.twoPrecents')!.innerHTML = players[j].twoPercent.toString();
+            card.querySelector('.playerPoints')!.innerHTML = players[j].points.toString();
+                       
+    }
+}
+
+// מאזין לכפתור דפדוף ימינה
+document.querySelector('.btnRight')!.addEventListener('click', () => {
+    if(index >= teamsFromDB.length - 1){
+        index = 0;
+    }
+    else{
+        index++;
+    }
+    renderTeams();
+    
+})
+
+// מאזין לכפתור דפדוף שמאלה
+document.querySelector('.btnLeft')!.addEventListener('click', () => {
+    if(index <= 0){
+        index = teamsFromDB.length - 1;
+    }
+    else{
+        index--;
+    }
+    renderTeams();
+})
+
 
 // יצירת מבנה אובייקט סינון עם פרמטרים שהזין המשתמש שישלחו לשרת
 const createBodyToPost = () : Filter => {
@@ -195,12 +251,14 @@ searchButton.addEventListener('click',async (e) => {
     try
     {
         const data : dbPlayer[]|Error = await postDada(body, FILTER_END_POINT);
+        
         if(data instanceof Error)
         {
             throw data;
         }
         
         renderTable(data);
+        playersArr = data;
         searchButton.style.backgroundColor = 'red';
     }
     catch(err)
@@ -210,57 +268,107 @@ searchButton.addEventListener('click',async (e) => {
 });
 
 
+const feachTeams = async () => {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// החזרת מערך השחקנים מהלוקל סטורג
-const loadPlayers = () : displayPlayer[] | null => {
-    const arr : string | null  = localStorage.getItem('playersArr');
-    return arr ? JSON.parse(arr) : null;
+    try{
+        const Response = await fetch(`https://nbaserver-q21u.onrender.com/api/GetAllTeams`)
+        const data = await Response.json();
+        console.log(data);
+        teamsFromDB = data;
+        
+    }
+    catch(err)
+    {
+        console.error(err);
+    }
 }
 
-// הוספת אובייקט  למערך הלוקל סטורג
-const addPlayer = (player: displayPlayer) :void =>  {
-    const arr : displayPlayer[]|null = loadPlayers();
-    if(arr){
-        arr.push(player);
-        localStorage.setItem('playersArr', JSON.stringify(arr));
-    } 
-    else{
-        const newArr : displayPlayer[] = [player];
-        localStorage.setItem('playersArr', JSON.stringify(newArr));
-    } 
+feachTeams();
+
+// saveTeamButton.addEventListener('click', () => {
+//     if(teamArr.length !== 5)
+//     {
+//         alert('לא נבחרו 5 שחקנים');
+
+//     }
+//     else
+//     {
+//         postDada(teamArr)
+            
+       
+//     }
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // החזרת מערך השחקנים מהלוקל סטורג
+// const loadPlayers = () : displayPlayer[] | null => {
+//     const arr : string | null  = localStorage.getItem('playersArr');
+//     return arr ? JSON.parse(arr) : null;
+// }
+
+// // הוספת אובייקט  למערך הלוקל סטורג
+// const addPlayer = (player: displayPlayer) :void =>  {
+//     const arr : displayPlayer[]|null = loadPlayers();
+//     if(arr){
+//         arr.push(player);
+//         localStorage.setItem('playersArr', JSON.stringify(arr));
+//     } 
+//     else{
+//         const newArr : displayPlayer[] = [player];
+//         localStorage.setItem('playersArr', JSON.stringify(newArr));
+//     } 
     
-}
+// }
 
-// מחיקת שחקן מהמערך בלוקל סטורג
-const removeTask = (id: string) => {
-    const arr : displayPlayer[] | null = loadPlayers()
-    if(!arr) return;
-    const newPlayersArr = arr.filter((player) => player._id !== id);
-    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
-}
+// // מחיקת שחקן מהמערך בלוקל סטורג
+// const removeTask = (id: string) => {
+//     const arr : displayPlayer[] | null = loadPlayers()
+//     if(!arr) return;
+//     const newPlayersArr = arr.filter((player) => player._id !== id);
+//     localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
+// }
   
-const player1:Filter = {
-    position: 'PG',
-    twoPercent: 0,
-    threePercent: 0,
-    points: 0
-}
+// const player1:Filter = {
+//     position: 'PG',
+//     twoPercent: 0,
+//     threePercent: 0,
+//     points: 0
+// }
 
 // postDada(player1, FILTER_END_POINT);
