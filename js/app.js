@@ -17,6 +17,7 @@ const threeInput = document.querySelector('.threeRange');
 const twoInput = document.querySelector('.twoRange');
 const searchButton = document.querySelector('.searchButton');
 const tableBody = document.querySelector('.tableBody');
+// פונקצייה להצגת מספרים מעל לאינפוט בחירת הנקודות והאחוזים
 const updateLabels = () => {
     const pointsLabel = document.querySelector('.pointsLabel');
     const threeLabel = document.querySelector('.threeLabel');
@@ -25,6 +26,8 @@ const updateLabels = () => {
     threeLabel.innerHTML = threeInput.value;
     twoLabel.innerHTML = twoInput.value;
 };
+updateLabels();
+// האזנה לשינוי באינפוט המספרים והפעלת הפונקצייה לעדכון בתצוגה
 pointsInput.addEventListener('input', updateLabels);
 threeInput.addEventListener('input', updateLabels);
 twoInput.addEventListener('input', updateLabels);
@@ -50,22 +53,31 @@ const postDada = (obj_1, ...args_1) => __awaiter(void 0, [obj_1, ...args_1], voi
         return err instanceof Error ? err : new Error('An unknown error occurred');
     }
 });
+//פןנקצייה שמופעלת בלחיצה על כפתור הוספת שחקן מהרשימה לנבחרת
 const addPlayerToCard = (target) => {
     var _a, _b, _c, _d;
-    // const target :HTMLButtonElement = e.target!;
     const parent = target.parentElement.parentElement;
-    console.log(target);
-    console.log(parent);
-    // const player = playersArr.find((player) => player._id === target.id);
-    // if (!player) return;
+    // מציאת תפקיד השחקן לפי אטריביוט שנתתי לכפתור
     const position = target.getAttribute('data-position');
+    // מציאת כרטיס השחקן בעל אותו מזהה תפקיד
     const card = document.querySelector(`#${position}`);
-    card.style.backgroundColor = 'pink';
+    //הזרקת השחקן לכרטיס
     card.querySelector('.playerName').innerHTML = (_a = parent.querySelector('.nameDiv')) === null || _a === void 0 ? void 0 : _a.textContent;
     card.querySelector('.threePrecents').innerHTML = (_b = parent.querySelector('.THREE_DIV')) === null || _b === void 0 ? void 0 : _b.textContent;
     card.querySelector('.twoPrecents').innerHTML = (_c = parent.querySelector('.FG_DIV')) === null || _c === void 0 ? void 0 : _c.textContent;
     card.querySelector('.playerPoints').innerHTML = (_d = parent.querySelector('.pointsDiv')) === null || _d === void 0 ? void 0 : _d.textContent;
+    // טיפול בשינוי צבע הכפתורים לאחר הלחיצה
+    card.style.backgroundColor = 'pink';
+    target.style.backgroundColor = 'red';
+    searchButton.style.backgroundColor = 'green';
+    const buttons = document.querySelectorAll('.addBtn');
+    buttons.forEach(button => {
+        if (button.id !== target.id) {
+            button.style.backgroundColor = 'blue';
+        }
+    });
 };
+// יצירת מבנה אובייקט סינון עם פרמטרים שהזין המשתמש שישלחו לשרת
 const createBodyToPost = () => {
     return {
         position: positionsInput.value,
@@ -74,9 +86,11 @@ const createBodyToPost = () => {
         points: Number(pointsInput.value)
     };
 };
+// פונקצייה שמקבלת אובייקט של שחקן ויוצרת עבורו אלמנט שורה בטבלה
 const createTableRow = (player) => {
     const row = document.createElement('div');
     row.classList.add('playerRow');
+    row.classList.add(`${player.position}color`);
     const nameDiv = document.createElement('div');
     nameDiv.classList.add('nameDiv');
     nameDiv.textContent = player.playerName;
@@ -91,11 +105,11 @@ const createTableRow = (player) => {
     row.appendChild(pointsDiv);
     const FG_DIV = document.createElement('div');
     FG_DIV.classList.add('FG_DIV');
-    FG_DIV.textContent = player.twoPercent.toString();
+    FG_DIV.textContent = player.twoPercent.toString() + '%';
     row.appendChild(FG_DIV);
     const THREE_DIV = document.createElement('div');
     THREE_DIV.classList.add('THREE_DIV');
-    THREE_DIV.textContent = player.threePercent.toString();
+    THREE_DIV.textContent = player.threePercent.toString() + '%';
     row.appendChild(THREE_DIV);
     const actionDiv = document.createElement('div');
     actionDiv.classList.add('actionDiv');
@@ -109,6 +123,7 @@ const createTableRow = (player) => {
     row.appendChild(actionDiv);
     return row;
 };
+// פונקצייה שמקבלת מערך שחקנים ומטפלת בהצגתו בטבלה
 const renderTable = (arr) => {
     tableBody.innerHTML = '';
     arr.forEach((player) => {
@@ -117,16 +132,17 @@ const renderTable = (arr) => {
         tableBody.appendChild(row);
     });
 };
-searchButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+// מאזין ראשי לכפתור החיפוש ומטפל וקורא לפונקציות המתאימות
+searchButton.addEventListener('click', (e) => __awaiter(void 0, void 0, void 0, function* () {
     const body = createBodyToPost();
     console.log(body);
     try {
         const data = yield postDada(body, FILTER_END_POINT);
-        console.log(data);
         if (data instanceof Error) {
             throw data;
         }
         renderTable(data);
+        searchButton.style.backgroundColor = 'red';
     }
     catch (err) {
         console.error(err);

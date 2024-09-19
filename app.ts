@@ -8,6 +8,8 @@ const twoInput:HTMLInputElement = document.querySelector('.twoRange')!;
 const searchButton:HTMLButtonElement = document.querySelector('.searchButton')!;
 const tableBody = document.querySelector('.tableBody')!;
 
+
+// פונקצייה להצגת מספרים מעל לאינפוט בחירת הנקודות והאחוזים
 const updateLabels = () => {
     const pointsLabel = document.querySelector('.pointsLabel') as HTMLLabelElement;
     const threeLabel = document.querySelector('.threeLabel') as HTMLLabelElement;
@@ -16,12 +18,16 @@ const updateLabels = () => {
     threeLabel.innerHTML =   threeInput.value;
     twoLabel.innerHTML =  twoInput.value;
 }
+updateLabels();
 
+// האזנה לשינוי באינפוט המספרים והפעלת הפונקצייה לעדכון בתצוגה
 pointsInput.addEventListener('input', updateLabels);
 threeInput.addEventListener('input', updateLabels);
 twoInput.addEventListener('input', updateLabels);
 
 
+
+// אינטרפייס של שחקן תצוגה
 interface displayPlayer{
     position: string;
     twoPercent: number;
@@ -31,7 +37,7 @@ interface displayPlayer{
     _id: string;
 }
 
-
+//אינטרפייס של שחקן ממסד הנתונים
 interface dbPlayer{
     age: number;
     games: number;
@@ -46,7 +52,7 @@ interface dbPlayer{
     _id: string;
 }
 
-
+// אינטרפייס של גוף בקשת הפוסט לשרת
 interface Filter{
     position: string;
     twoPercent: number;
@@ -79,23 +85,39 @@ const postDada = async (obj : Filter, endPoint : string = '') : Promise<dbPlayer
 }
 
 
+//פןנקצייה שמופעלת בלחיצה על כפתור הוספת שחקן מהרשימה לנבחרת
 const addPlayerToCard = (target : HTMLButtonElement) => {
-    // const target :HTMLButtonElement = e.target!;
+    
     const parent = target.parentElement!.parentElement!;
-    console.log(target)
-    console.log(parent)
-    // const player = playersArr.find((player) => player._id === target.id);
-    // if (!player) return;
+
+    // מציאת תפקיד השחקן לפי אטריביוט שנתתי לכפתור
     const position = target.getAttribute('data-position');
+
+    // מציאת כרטיס השחקן בעל אותו מזהה תפקיד
     const card : HTMLDivElement = document.querySelector(`#${position}`)!;
-    card.style.backgroundColor = 'pink';
+
+    //הזרקת השחקן לכרטיס
     card.querySelector('.playerName')!.innerHTML = parent.querySelector('.nameDiv')?.textContent!;
     card.querySelector('.threePrecents')!.innerHTML = parent.querySelector('.THREE_DIV')?.textContent!;
     card.querySelector('.twoPrecents')!.innerHTML = parent.querySelector('.FG_DIV')?.textContent!;
     card.querySelector('.playerPoints')!.innerHTML = parent.querySelector('.pointsDiv')?.textContent!;
+
+    // טיפול בשינוי צבע הכפתורים לאחר הלחיצה
+    card.style.backgroundColor = 'pink';
+    target.style.backgroundColor = 'red';
+    searchButton.style.backgroundColor = 'green';
+    const buttons : NodeListOf<HTMLButtonElement> = document.querySelectorAll('.addBtn')!;
+    buttons.forEach(button => {
+        if(button.id !== target.id)
+        {
+            button.style.backgroundColor = 'blue';
+        }
+        
+    });
+
 }
 
-
+// יצירת מבנה אובייקט סינון עם פרמטרים שהזין המשתמש שישלחו לשרת
 const createBodyToPost = () : Filter => {
     
     return {
@@ -107,11 +129,13 @@ const createBodyToPost = () : Filter => {
 }
 
 
+// פונקצייה שמקבלת אובייקט של שחקן ויוצרת עבורו אלמנט שורה בטבלה
 const createTableRow = (player: dbPlayer) : HTMLDivElement => {
 
     
     const row = document.createElement('div');
     row.classList.add('playerRow');
+    row.classList.add(`${player.position}color`);
 
     const nameDiv = document.createElement('div');
     nameDiv.classList.add('nameDiv');
@@ -130,12 +154,12 @@ const createTableRow = (player: dbPlayer) : HTMLDivElement => {
 
     const FG_DIV = document.createElement('div');
     FG_DIV.classList.add('FG_DIV');
-    FG_DIV.textContent = player.twoPercent.toString();
+    FG_DIV.textContent = player.twoPercent.toString() + '%';
     row.appendChild(FG_DIV);
 
     const THREE_DIV = document.createElement('div');
     THREE_DIV.classList.add('THREE_DIV');
-    THREE_DIV.textContent = player.threePercent.toString();
+    THREE_DIV.textContent = player.threePercent.toString() + '%';
     row.appendChild(THREE_DIV);
 
     const actionDiv = document.createElement('div');
@@ -154,6 +178,7 @@ const createTableRow = (player: dbPlayer) : HTMLDivElement => {
 }
 
 
+// פונקצייה שמקבלת מערך שחקנים ומטפלת בהצגתו בטבלה
 const renderTable = (arr: dbPlayer[]) : void => {
     tableBody.innerHTML = '';
     arr.forEach((player) => {
@@ -163,19 +188,20 @@ const renderTable = (arr: dbPlayer[]) : void => {
     });
 }
 
-
-searchButton.addEventListener('click',async () => {
+// מאזין ראשי לכפתור החיפוש ומטפל וקורא לפונקציות המתאימות
+searchButton.addEventListener('click',async (e) => {
     const body : Filter = createBodyToPost();
     console.log(body)
     try
     {
         const data : dbPlayer[]|Error = await postDada(body, FILTER_END_POINT);
-        console.log(data);
         if(data instanceof Error)
         {
             throw data;
         }
+        
         renderTable(data);
+        searchButton.style.backgroundColor = 'red';
     }
     catch(err)
     {
