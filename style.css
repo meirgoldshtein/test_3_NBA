@@ -242,8 +242,14 @@ width: 100%;
     font-weight: 900;
     text-align: center;
 }
-.tableHeaders>div{
+.tableHeaders div{
+    height: 100%;
     width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
 }
 .playerRow > div{
     width: 15%;
@@ -251,11 +257,15 @@ width: 100%;
     font-weight: 700;
     
 }
-.playerRow{
+.playerRow {
     background-color: #fff;
     color: black;
     height: 15%;
     border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .playerRow button{
