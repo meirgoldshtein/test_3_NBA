@@ -35,23 +35,33 @@ interface Filter{
 }
 
 // החזרת מערך השחקנים מהלוקל סטורג
-const loadPlayers = () => {
-    const arr = localStorage.getItem('playersArr');
-    return arr ? JSON.parse(arr) : [];
+const loadPlayers = () : displayPlayer[] | null => {
+    const arr : string | null  = localStorage.getItem('playersArr');
+    return arr ? JSON.parse(arr) : null;
 }
 
 // הוספת אובייקט  למערך הלוקל סטורג
-const addPlayer = (player: displayPlayer) => {
-    const arr = loadPlayers();
-    arr.push(player);
-    localStorage.setItem('playersArr', JSON.stringify(arr));
+const addPlayer = (player: displayPlayer) :void =>  {
+    const arr : displayPlayer[]|null = loadPlayers();
+    if(arr){
+        arr.push(player);
+        localStorage.setItem('playersArr', JSON.stringify(arr));
+    } 
+    else{
+        const newArr : displayPlayer[] = [player];
+        localStorage.setItem('playersArr', JSON.stringify(newArr));
+    } 
+    
 }
 
 // מחיקת משימה מהמערך בלוקל סטורג
 const removeTask = (id: string) => {
-    const arr : displayPlayer[] = loadPlayers().filter(t => t._id != id);
-    localStorage.setItem('playersArr', JSON.stringify(arr));
+    const arr : displayPlayer[] | null = loadPlayers()
+    if(!arr) return;
+    const newPlayersArr = arr.filter((player) => player._id !== id);
+    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
 }
+   
 
 // פונקציה גנרית שמקבלת נקודת קצה ואובייקט ושולחת לשרת בקשת פוסט
 const postDada = async (obj : Filter, endPoint : string = '') : Promise<dbPlayer[] | Error> => {
@@ -83,4 +93,4 @@ const player1:Filter = {
     points: 0
 }
 
-postDada(player1, FILTER_END_POINT);
+// postDada(player1, FILTER_END_POINT);

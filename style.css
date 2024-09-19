@@ -5,5 +5,139 @@ padding: 0;
 }
 
 body{
-    background-color: #dddbdb;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;  
+    font-size: 1em;
+}
+
+.container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background-color: #d9cfcf;
+}
+
+.header{
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: blue;
+}
+
+.header h2{
+    color: white;
+    font-size: 1.2em;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.teamContainer{
+    width: 100%;
+    height: 35vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background-color: rgb(240, 224, 224);
+}
+
+.title{
+    width: 100%;
+    height: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+    color: blue;
+    font-size: 1.2em;
+}
+.searchTitle{
+    width: 100%;
+    height: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.8%;
+    color: blue;
+    font-size: 1.2em;
+}
+
+
+
+.players{
+    width: 100%;
+    height: 92%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    background-color: rgb(240, 233, 233);
+}
+
+.card{
+    width: 16%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(184, 182, 182);
+    margin: 1%;
+    border-radius: 10px;
+    border: 2px solid rgb(240, 224, 224);
+    box-shadow: 10px 10px 5px rgb(215, 213, 213);
+    padding: 1%;
+}
+
+.card .playerPosition{
+    color: blue;
+    font-weight: bold;
+}
+
+.searchContainer{
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background-color: rgb(240, 224, 224);
+}
+
+.searchCard{
+    width: 50%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(184, 182, 182);
+    margin: 0.5%;
+    border-radius: 10px;
+    border: 2px solid rgb(240, 224, 224);
+    box-shadow: 10px 10px 5px rgb(215, 213, 213);
+    padding: 0.5%;
+}
+
+.searchCard select{
+    width: 80%;
+    height: 20%;
+    border-radius: 5px;
+    border: 0.7px solid rgb(240, 224, 224);
+    box-shadow: 2px 2px 5px rgb(215, 213, 213);
+   
+}
+
+.searchCard input{
+    width: 80%;
+    height: 20%;
+    border-radius: 5px;
+    border: 0.7px solid rgb(240, 224, 224);
+    box-shadow: 1px 1px 1px rgb(195, 193, 193);
 }

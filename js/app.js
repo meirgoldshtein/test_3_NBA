@@ -14,18 +14,27 @@ const playersArr = [];
 // החזרת מערך השחקנים מהלוקל סטורג
 const loadPlayers = () => {
     const arr = localStorage.getItem('playersArr');
-    return arr ? JSON.parse(arr) : [];
+    return arr ? JSON.parse(arr) : null;
 };
 // הוספת אובייקט  למערך הלוקל סטורג
 const addPlayer = (player) => {
     const arr = loadPlayers();
-    arr.push(player);
-    localStorage.setItem('playersArr', JSON.stringify(arr));
+    if (arr) {
+        arr.push(player);
+        localStorage.setItem('playersArr', JSON.stringify(arr));
+    }
+    else {
+        const newArr = [player];
+        localStorage.setItem('playersArr', JSON.stringify(newArr));
+    }
 };
 // מחיקת משימה מהמערך בלוקל סטורג
 const removeTask = (id) => {
-    const arr = loadPlayers().filter(t => t._id != id);
-    localStorage.setItem('playersArr', JSON.stringify(arr));
+    const arr = loadPlayers();
+    if (!arr)
+        return;
+    const newPlayersArr = arr.filter((player) => player._id !== id);
+    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
 };
 // פונקציה גנרית שמקבלת נקודת קצה ואובייקט ושולחת לשרת בקשת פוסט
 const postDada = (obj_1, ...args_1) => __awaiter(void 0, [obj_1, ...args_1], void 0, function* (obj, endPoint = '') {
@@ -55,4 +64,4 @@ const player1 = {
     threePercent: 0,
     points: 0
 };
-postDada(player1, FILTER_END_POINT);
+// postDada(player1, FILTER_END_POINT);
