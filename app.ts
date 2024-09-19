@@ -79,6 +79,23 @@ const postDada = async (obj : Filter, endPoint : string = '') : Promise<dbPlayer
 }
 
 
+const addPlayerToCard = (target : HTMLButtonElement) => {
+    // const target :HTMLButtonElement = e.target!;
+    const parent = target.parentElement!.parentElement!;
+    console.log(target)
+    console.log(parent)
+    // const player = playersArr.find((player) => player._id === target.id);
+    // if (!player) return;
+    const position = target.getAttribute('data-position');
+    const card : HTMLDivElement = document.querySelector(`#${position}`)!;
+    card.style.backgroundColor = 'pink';
+    card.querySelector('.playerName')!.innerHTML = parent.querySelector('.nameDiv')?.textContent!;
+    card.querySelector('.threePrecents')!.innerHTML = parent.querySelector('.THREE_DIV')?.textContent!;
+    card.querySelector('.twoPrecents')!.innerHTML = parent.querySelector('.FG_DIV')?.textContent!;
+    card.querySelector('.playerPoints')!.innerHTML = parent.querySelector('.pointsDiv')?.textContent!;
+}
+
+
 const createBodyToPost = () : Filter => {
     
     return {
@@ -125,6 +142,9 @@ const createTableRow = (player: dbPlayer) : HTMLDivElement => {
     actionDiv.classList.add('actionDiv');
     const addBtn = document.createElement('button');
     addBtn.classList.add('addBtn');
+    addBtn.id = player._id;
+    addBtn.setAttribute('data-position', player.position);
+    addBtn.addEventListener('click', () => addPlayerToCard(addBtn));
     addBtn.textContent = 'Add Damian to Current Team';
     actionDiv.appendChild(addBtn);
     row.appendChild(actionDiv);
@@ -138,6 +158,7 @@ const renderTable = (arr: dbPlayer[]) : void => {
     tableBody.innerHTML = '';
     arr.forEach((player) => {
         const row = createTableRow(player);
+        row.id = player._id;
         tableBody.appendChild(row);
     });
 }

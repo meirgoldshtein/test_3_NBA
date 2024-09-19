@@ -50,6 +50,22 @@ const postDada = (obj_1, ...args_1) => __awaiter(void 0, [obj_1, ...args_1], voi
         return err instanceof Error ? err : new Error('An unknown error occurred');
     }
 });
+const addPlayerToCard = (target) => {
+    var _a, _b, _c, _d;
+    // const target :HTMLButtonElement = e.target!;
+    const parent = target.parentElement.parentElement;
+    console.log(target);
+    console.log(parent);
+    // const player = playersArr.find((player) => player._id === target.id);
+    // if (!player) return;
+    const position = target.getAttribute('data-position');
+    const card = document.querySelector(`#${position}`);
+    card.style.backgroundColor = 'pink';
+    card.querySelector('.playerName').innerHTML = (_a = parent.querySelector('.nameDiv')) === null || _a === void 0 ? void 0 : _a.textContent;
+    card.querySelector('.threePrecents').innerHTML = (_b = parent.querySelector('.THREE_DIV')) === null || _b === void 0 ? void 0 : _b.textContent;
+    card.querySelector('.twoPrecents').innerHTML = (_c = parent.querySelector('.FG_DIV')) === null || _c === void 0 ? void 0 : _c.textContent;
+    card.querySelector('.playerPoints').innerHTML = (_d = parent.querySelector('.pointsDiv')) === null || _d === void 0 ? void 0 : _d.textContent;
+};
 const createBodyToPost = () => {
     return {
         position: positionsInput.value,
@@ -85,6 +101,9 @@ const createTableRow = (player) => {
     actionDiv.classList.add('actionDiv');
     const addBtn = document.createElement('button');
     addBtn.classList.add('addBtn');
+    addBtn.id = player._id;
+    addBtn.setAttribute('data-position', player.position);
+    addBtn.addEventListener('click', () => addPlayerToCard(addBtn));
     addBtn.textContent = 'Add Damian to Current Team';
     actionDiv.appendChild(addBtn);
     row.appendChild(actionDiv);
@@ -94,6 +113,7 @@ const renderTable = (arr) => {
     tableBody.innerHTML = '';
     arr.forEach((player) => {
         const row = createTableRow(player);
+        row.id = player._id;
         tableBody.appendChild(row);
     });
 };
