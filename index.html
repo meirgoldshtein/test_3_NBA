@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
-    <script src="./js/app.js"></script>
+    <script src="./js/app.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -31,16 +31,34 @@
         </div>
         <div class="searchContainer">
             <div class="searchCard">
-                <select name="" id="">
+                <select name="" id="positionSelect">
                     <option value="PG">PG</option>
                     <option value="SG">SG</option>
                     <option value="SF">SF</option>
                     <option value="PF">PF</option>
                     <option value="C">C</option>
                 </select>
+                <label for="points" class="pointsLabel"></label>
                 <input type="range" class="points" min="0" max="10000">
+                <label for="threeRange" class="threeLabel"></label>
                 <input type="range" class="threeRange" min="0" max="100">
+                <label for="twoRange" class="twoLabel"></label>
                 <input type="range" class="twoRange" min="0" max="100">
+                <button class="searchButton">Search</button>
+            </div>
+            
+            <div class="table">
+                <div class="tableHeaders">
+                    <div class="playerHeader">Player</div>
+                    <div class="positionHeader">Position</div>
+                    <div class="pointsHeader">Points</div>
+                    <div class="FGHeader">FG%</div>
+                    <div class="threePHeader">3P%</div>
+                    <div class="actionHeader">Action</div>
+                </div>
+                <div class="tableBody">
+                    
+                </div>
             </div>
         </div>
     </div>

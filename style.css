@@ -37,7 +37,7 @@ body{
 
 .teamContainer{
     width: 100%;
-    height: 35vh;
+    height: 30vh;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -93,6 +93,7 @@ body{
     border: 2px solid rgb(240, 224, 224);
     box-shadow: 10px 10px 5px rgb(215, 213, 213);
     padding: 1%;
+    font-size: 0.9rem;
 }
 
 .card .playerPosition{
@@ -102,17 +103,18 @@ body{
 
 .searchContainer{
     width: 100%;
-    height: 50vh;
+    height: 170vh;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
     background-color: rgb(240, 224, 224);
+    overflow: auto;
 }
 
 .searchCard{
-    width: 50%;
-    height: 35%;
+    width: 40%;
+    height: 55%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -127,17 +129,118 @@ body{
 
 .searchCard select{
     width: 80%;
-    height: 20%;
+    height: 15%;
     border-radius: 5px;
     border: 0.7px solid rgb(240, 224, 224);
     box-shadow: 2px 2px 5px rgb(215, 213, 213);
    
 }
 
+.searchCard label{
+
+    width: 20%;
+    height: 12%;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.7rem;
+    background-color: #a78f8f;
+}
 .searchCard input{
     width: 80%;
-    height: 20%;
+    height: 10%;
     border-radius: 5px;
     border: 0.7px solid rgb(240, 224, 224);
     box-shadow: 1px 1px 1px rgb(195, 193, 193);
 }
+
+.searchCard button{
+    width: 30%;
+    height: 15%;
+    border-radius: 5px;
+    border: 0.7px solid rgb(240, 224, 224);
+    box-shadow: 1px 1px 1px rgb(195, 193, 193);
+    background-color: #409e40;
+    font-size: 0.8rem;
+}
+
+.table{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    background-color: rgb(184, 182, 182);
+    margin: 0.5%;
+    border-radius: 10px;
+    border: 2px solid rgb(240, 224, 224);
+    box-shadow: 10px 10px 5px rgb(215, 213, 213);
+
+}
+
+.tableBody{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    background-color: rgb(184, 182, 182);
+    overflow: auto;
+}
+
+.tableHeaders, .playerRow{
+    background-color: red;
+    color: azure;
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    padding: 0.5%;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+.tableHeaders>div{
+    width: 15%;
+}
+.playerRow > div{
+    width: 15%;
+    
+}
+.playerRow{
+    background-color: #fff;
+    color: black;
+    height: 15%;
+    border: 1px solid black;
+}
+
+.playerRow button{
+    width: 70%;
+    height: 40%;
+    border-radius: 5px;
+    background-color: blue;
+    color: white;
+}
+
+/* .playerHeader{
+    width: 15%;
+};
+
+.positionHeader{
+    width: 15%;
+};
+.pointsHeader{
+    width: 10%;
+};
+.FGHeader{
+    width: 7%; 
+};
+.threePHeader{
+    width: 7%;
+};
+.actionHeader{
+    width: 30%;
+} */

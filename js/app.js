@@ -11,31 +11,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const FILTER_END_POINT = 'api/filter';
 const baseURL = 'https://nbaserver-q21u.onrender.com/';
 const playersArr = [];
-// החזרת מערך השחקנים מהלוקל סטורג
-const loadPlayers = () => {
-    const arr = localStorage.getItem('playersArr');
-    return arr ? JSON.parse(arr) : null;
+const positionsInput = document.querySelector('#positionSelect');
+const pointsInput = document.querySelector('.points');
+const threeInput = document.querySelector('.threeRange');
+const twoInput = document.querySelector('.twoRange');
+const searchButton = document.querySelector('.searchButton');
+const tableBody = document.querySelector('.tableBody');
+const updateLabels = () => {
+    const pointsLabel = document.querySelector('.pointsLabel');
+    const threeLabel = document.querySelector('.threeLabel');
+    const twoLabel = document.querySelector('.twoLabel');
+    pointsLabel.innerHTML = pointsInput.value;
+    threeLabel.innerHTML = threeInput.value;
+    twoLabel.innerHTML = twoInput.value;
 };
-// הוספת אובייקט  למערך הלוקל סטורג
-const addPlayer = (player) => {
-    const arr = loadPlayers();
-    if (arr) {
-        arr.push(player);
-        localStorage.setItem('playersArr', JSON.stringify(arr));
-    }
-    else {
-        const newArr = [player];
-        localStorage.setItem('playersArr', JSON.stringify(newArr));
-    }
-};
-// מחיקת משימה מהמערך בלוקל סטורג
-const removeTask = (id) => {
-    const arr = loadPlayers();
-    if (!arr)
-        return;
-    const newPlayersArr = arr.filter((player) => player._id !== id);
-    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
-};
+pointsInput.addEventListener('input', updateLabels);
+threeInput.addEventListener('input', updateLabels);
+twoInput.addEventListener('input', updateLabels);
 // פונקציה גנרית שמקבלת נקודת קצה ואובייקט ושולחת לשרת בקשת פוסט
 const postDada = (obj_1, ...args_1) => __awaiter(void 0, [obj_1, ...args_1], void 0, function* (obj, endPoint = '') {
     try {
@@ -58,6 +50,93 @@ const postDada = (obj_1, ...args_1) => __awaiter(void 0, [obj_1, ...args_1], voi
         return err instanceof Error ? err : new Error('An unknown error occurred');
     }
 });
+const createBodyToPost = () => {
+    return {
+        position: positionsInput.value,
+        twoPercent: Number(twoInput.value),
+        threePercent: Number(threeInput.value),
+        points: Number(pointsInput.value)
+    };
+};
+const createTableRow = (player) => {
+    const row = document.createElement('div');
+    row.classList.add('playerRow');
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('nameDiv');
+    nameDiv.textContent = player.playerName;
+    row.appendChild(nameDiv);
+    const positionDiv = document.createElement('div');
+    positionDiv.textContent = player.position;
+    positionDiv.classList.add('positionDiv');
+    row.appendChild(positionDiv);
+    const pointsDiv = document.createElement('div');
+    pointsDiv.textContent = player.points.toString();
+    pointsDiv.classList.add('pointsDiv');
+    row.appendChild(pointsDiv);
+    const FG_DIV = document.createElement('div');
+    FG_DIV.classList.add('FG_DIV');
+    FG_DIV.textContent = player.twoPercent.toString();
+    row.appendChild(FG_DIV);
+    const THREE_DIV = document.createElement('div');
+    THREE_DIV.classList.add('THREE_DIV');
+    THREE_DIV.textContent = player.threePercent.toString();
+    row.appendChild(THREE_DIV);
+    const actionDiv = document.createElement('div');
+    actionDiv.classList.add('actionDiv');
+    const addBtn = document.createElement('button');
+    addBtn.classList.add('addBtn');
+    addBtn.textContent = 'Add Damian to Current Team';
+    actionDiv.appendChild(addBtn);
+    row.appendChild(actionDiv);
+    return row;
+};
+const renderTable = (arr) => {
+    tableBody.innerHTML = '';
+    arr.forEach((player) => {
+        const row = createTableRow(player);
+        tableBody.appendChild(row);
+    });
+};
+searchButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    const body = createBodyToPost();
+    console.log(body);
+    try {
+        const data = yield postDada(body, FILTER_END_POINT);
+        console.log(data);
+        if (data instanceof Error) {
+            throw data;
+        }
+        renderTable(data);
+    }
+    catch (err) {
+        console.error(err);
+    }
+}));
+// החזרת מערך השחקנים מהלוקל סטורג
+const loadPlayers = () => {
+    const arr = localStorage.getItem('playersArr');
+    return arr ? JSON.parse(arr) : null;
+};
+// הוספת אובייקט  למערך הלוקל סטורג
+const addPlayer = (player) => {
+    const arr = loadPlayers();
+    if (arr) {
+        arr.push(player);
+        localStorage.setItem('playersArr', JSON.stringify(arr));
+    }
+    else {
+        const newArr = [player];
+        localStorage.setItem('playersArr', JSON.stringify(newArr));
+    }
+};
+// מחיקת שחקן מהמערך בלוקל סטורג
+const removeTask = (id) => {
+    const arr = loadPlayers();
+    if (!arr)
+        return;
+    const newPlayersArr = arr.filter((player) => player._id !== id);
+    localStorage.setItem('playersArr', JSON.stringify(newPlayersArr));
+};
 const player1 = {
     position: 'PG',
     twoPercent: 0,
